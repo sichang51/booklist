@@ -48,17 +48,22 @@ end
 # get "/"
 
 namespace "/api/v1" do
-  before do
-    content_type "application/json"
-  end
+  # before do
+  #   content_type "application/json"
+  # end
 
-  get "/books" do
-    books = Book.all
+  # get "/books" do
+  #   books = Book.all
 
-    [:title, :isbn, :author].each do |filter|
-      books = books.send(filter, params[filter]) if params[filter]
-    end
+  #   [:title, :isbn, :author].each do |filter|
+  #     books = books.send(filter, params[filter]) if params[filter]
+  #   end
+
+  get "/books/:id " do |id|
+    book = Book.where(id: id).first
+    halt(404, { message: "Book Not Found" }.to_json) unless book
+    BookSerializer.new(book).to_json
     #We just change this from books.to_json to the following
-    books.map { |book| BookSerializer.new(book) }.to_json
+    # books.map { |book| BookSerializer.new(book) }.to_json
   end
 end
